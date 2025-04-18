@@ -4,6 +4,7 @@ tag=0.19.4
 version=3.10
 url=https://github.com/scc-tw/standalone-python/releases/download/release-2024-04-29/release-${version}-x86_64.tar.gz
 
+mkdir -p .python/
 [ -f .python/opt/python/bin/python3 ] || {
   # download the standalone Python release
   wget $url -O standalone-python.tar.gz
@@ -12,7 +13,6 @@ url=https://github.com/scc-tw/standalone-python/releases/download/release-2024-0
     exit 1
   fi
 
-  mkdir -p .python/
   tar -xzf standalone-python.tar.gz -C .python
   if [ $? -ne 0 ]; then
     echo "Failed to extract standalone Python"
