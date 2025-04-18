@@ -28,7 +28,7 @@ jobs:
         run: |
           TAG=$(grep "tag=" build.sh | cut -d= -f2)
           PY_VER=$(grep "version=" build.sh | cut -d= -f2)
-	  BUILD_NUM=$(grep "build_version=" build.sh | cut -d= -f2)
+          BUILD_NUM=$(grep "build_version=" build.sh | cut -d= -f2)
           ARTIFACT_NAME="xonsh-${TAG}-py-${PY_VER}-x86_64-${BUILD_NUM}.tar.gz"
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "py_ver=${PY_VER}" >> $GITHUB_OUTPUT
