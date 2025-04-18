@@ -39,7 +39,7 @@ jobs:
         id: check_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: v${{ steps.extract_info.outputs.tag }}
+          RELEASE_TAG: v${{ steps.extract_info.outputs.tag }}-${{ steps.extract_info.outputs.build_num }}
         run: |
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "Authorization: token ${GITHUB_TOKEN}" \
