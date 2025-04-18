@@ -3,7 +3,14 @@ name: Build and Release
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
+
+permissions:
+  contents: write  # This grants permission to create releases
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
 
 jobs:
   build-and-release:
