@@ -22,9 +22,7 @@ url=https://github.com/scc-tw/standalone-python/releases/download/release-2024-0
 
 export PATH=$(pwd)/.python/opt/python/bin:$PATH
 
-cd ./xonsh
-# build and install xonsh into the local standalone Python
-python3 setup.py install --prefix=$(pwd)/../.python/opt/python
+pip3 install 'xonsh[full]'
 if [ $? -ne 0 ]; then
   echo "Failed to install xonsh"
   exit 1
@@ -35,9 +33,8 @@ cat > xon.sh <<EOF
 #!/bin/bash
 curdir=\$(dirname "\$0")
 export PATH=\$curdir/.python/opt/python/bin:\$PATH
-export PYTHONPATH=\$curdir/.python/opt/python/lib/python${version}/site-packages
 
-exec \$curdir/.python/opt/python/bin/python3 -m xonsh "\$@"
+exec \$curdir/.python/opt/python/bin/xonsh "\$@"
 EOF
 chmod +x xon.sh
 
