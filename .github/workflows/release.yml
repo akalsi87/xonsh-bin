@@ -28,9 +28,11 @@ jobs:
         run: |
           TAG=$(grep "tag=" build.sh | cut -d= -f2)
           PY_VER=$(grep "version=" build.sh | cut -d= -f2)
-          ARTIFACT_NAME="xonsh-${TAG}-py-${PY_VER}-x86_64.tar.gz"
+	  BUILD_NUM=$(grep "build_version=" build.sh | cut -d= -f2)
+          ARTIFACT_NAME="xonsh-${TAG}-py-${PY_VER}-x86_64-${BUILD_NUM}.tar.gz"
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "py_ver=${PY_VER}" >> $GITHUB_OUTPUT
+          echo "build_num=${BUILD_NUM}" >> $GITHUB_OUTPUT
           echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
           
       - name: Check if release exists
@@ -56,8 +58,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Create release
-          RELEASE_TAG="v${{ steps.extract_info.outputs.tag }}"
-          RELEASE_NAME="Xonsh ${{ steps.extract_info.outputs.tag }} with Python ${{ steps.extract_info.outputs.py_ver }}"
+          RELEASE_TAG="v${{ steps.extract_info.outputs.tag }}-${{ steps.extract_info.outputs.build_num }}"
+          RELEASE_NAME="Xonsh ${{ steps.extract_info.outputs.tag }} with Python ${{ steps.extract_info.outputs.py_ver }} (${{ steps.extract_info.outputs.build_num }})"
           ARTIFACT_PATH="${{ steps.extract_info.outputs.artifact_name }}"
           
           # Create a release using GitHub CLI

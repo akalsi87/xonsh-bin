@@ -2,6 +2,7 @@
 
 tag=0.19.4
 version=3.10
+build_version=1
 url=https://github.com/scc-tw/standalone-python/releases/download/release-2024-04-29/release-${version}-x86_64.tar.gz
 
 mkdir -p .python/
@@ -33,12 +34,12 @@ cat > xon.sh <<EOF
 curdir=\$(dirname "\$0")
 export PATH=\$curdir/.python/opt/python/bin:\$PATH
 
-exec \$curdir/.python/opt/python/bin/xonsh "\$@"
+exec \$curdir/.python/opt/python/bin/python3.10-real -m xonsh "\$@"
 EOF
 chmod +x xon.sh
 
 # create a custom tar file with maximum compression level
-tar_file="xonsh-${tag}-py-${version}-x86_64.tar.gz"
+tar_file="xonsh-${tag}-py-${version}-x86_64-${build_version}.tar.gz"
 GZIP=-9 tar -czf $tar_file xon.sh .python
 if [ $? -ne 0 ]; then
   echo "Failed to create tar file"
