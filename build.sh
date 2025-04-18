@@ -27,7 +27,6 @@ if [ $? -ne 0 ]; then
   echo "Failed to install xonsh"
   exit 1
 fi
-cd ..
 # create a standalone xonsh shell script
 cat > xon.sh <<EOF
 #!/bin/bash
