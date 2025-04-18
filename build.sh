@@ -1,7 +1,7 @@
 #!/bin/bash
 
 tag=0.19.4
-version=3.10
+version=3.11
 build_num=1
 url=https://github.com/scc-tw/standalone-python/releases/download/release-2024-04-29/release-${version}-x86_64.tar.gz
 
@@ -31,20 +31,21 @@ fi
 # create a standalone xonsh shell script
 cat > xon.sh <<EOF
 #!/bin/bash
-curdir=\$(dirname "\$0")
+curdir=\$(dirname "\$BASH_SOURCE[0]")
 export PATH=\$curdir/.python/opt/python/bin:\$PATH
 
-exec \$curdir/.python/opt/python/bin/python3.10-real -m xonsh "\$@"
+exec \$curdir/.python/opt/python/bin/python${version}-real -m xonsh "\$@"
 EOF
 chmod +x xon.sh
+ln -sfn ./xon.sh ./xonsh
 
 # create a custom tar file with maximum compression level
 tar_file="xonsh-${tag}-py-${version}-x86_64-${build_num}.tar.gz"
-GZIP=-9 tar -czf $tar_file xon.sh .python
+GZIP=-9 tar -czf $tar_file xonsh xon.sh .python
 if [ $? -ne 0 ]; then
   echo "Failed to create tar file"
   exit 1
 fi
 echo "Standalone xonsh build completed successfully."
 echo "You can now use the xonsh script to run xonsh with the standalone Python."
-echo "To run xonsh, use: ./xon.sh"
+echo "To run xonsh, use: ./xonsh"
