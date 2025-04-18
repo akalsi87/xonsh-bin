@@ -1,0 +1,4 @@
+[submodule "xonsh"]
+	path = xonsh
+	url = https://github.com/xonsh/xonsh
+	tag = 0.19.4

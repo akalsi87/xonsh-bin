@@ -1,0 +1,64 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          
+      - name: Run build script
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+          
+      - name: Extract version information
+        id: extract_info
+        run: |
+          TAG=$(grep "tag=" build.sh | cut -d= -f2)
+          PY_VER=$(grep "version=" build.sh | cut -d= -f2)
+          ARTIFACT_NAME="xonsh-${TAG}-py-${PY_VER}-x86_64.tar.gz"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "py_ver=${PY_VER}" >> $GITHUB_OUTPUT
+          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+          
+      - name: Check if release exists
+        id: check_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: v${{ steps.extract_info.outputs.tag }}
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${RELEASE_TAG}")
+          
+          if [ "$HTTP_STATUS" -eq "200" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Create Release and Upload Asset
+        if: steps.check_release.outputs.exists == 'false'
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create release
+          RELEASE_TAG="v${{ steps.extract_info.outputs.tag }}"
+          RELEASE_NAME="Xonsh ${{ steps.extract_info.outputs.tag }} with Python ${{ steps.extract_info.outputs.py_ver }}"
+          ARTIFACT_PATH="${{ steps.extract_info.outputs.artifact_name }}"
+          
+          # Create a release using GitHub CLI
+          gh release create "${RELEASE_TAG}" \
+            --title "${RELEASE_NAME}" \
+            --notes "Standalone Xonsh ${{ steps.extract_info.outputs.tag }} with Python ${{ steps.extract_info.outputs.py_ver }}" \
+            "${ARTIFACT_PATH}"
