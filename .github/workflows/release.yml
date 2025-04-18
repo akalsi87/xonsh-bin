@@ -12,10 +12,6 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
 
-jobs:
-  build-and-release:
-    runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code with submodules
         uses: actions/checkout@v4
